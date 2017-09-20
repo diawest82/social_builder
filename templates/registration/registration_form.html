@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% block title %}{% endblock %}
+{% block meta %}{% endblock %}
+
+{% block content %}
+<div class="bounds">
+    <div class="grid-30 centered">
+      <h2>Sign Up</h2>
+      <form>
+        {% csrf_token %}
+          {% bootstrap_form form %}
+        <button class="button-primary">Sign In</button>
+        <a class="button" href="signup.html">Sign Up</a>
+      </form>
+    </div>
+  </div>
+</body>
+{% endblock %}
