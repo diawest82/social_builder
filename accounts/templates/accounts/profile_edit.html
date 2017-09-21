@@ -26,8 +26,8 @@
     </div>
 
     <div class="grid-70">
-        <h2>{{ form}}</h2>
-        <p></p>
+        <h2>{% bootstrap_field form.name %}</h2>
+        <p>{% bootstrap_field form.bio %}</p>
       <div class="circle--article--body">
       </div>
 
@@ -64,9 +64,11 @@
 
       <div class="circle--secondary--module">
         <div class="circle--primary--avatar">
-          <a class="button">
-            Upload Photo
-            <input type="file">
+            {% bootstrap_field form.avatar %}
+            {% if profile.avatar %}
+               <img src="{{  profile.avatar.url }}" height="150px">
+
+            {% endif %}
           </a>
         </div>
       </div>
@@ -74,7 +76,7 @@
       <div class="circle--secondary--module">
         <h4>My Skills</h4>
         <ul class="circle--clone--list">
-            {{ form2}}
+            {{ form2.management_form}}
             {% for f in form2 %}
           <li>
               {{ f }}

@@ -54,8 +54,13 @@
         <div class="circle--fluid--cell circle--fluid--secondary">
           <nav>
             <ul class="circle--inline">
+                {% if not user.is_authenticated %}
               <li><a href="{% url 'registration_register' %}">Sign Up</a></li>
               <li><a href="{% url 'auth_login' %}">Sign In</a></li>
+                {% else %}
+                <li><a href="{% url 'accounts:profile' username=user.username %}">Profile</a> </li>
+                <li><a href="{% url 'accounts:edit_profile' pk=user.pk %}">Edit Profile</a> </li>
+                {% endif %}
             </ul>
           </nav>
         </div>

@@ -127,7 +127,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'assets')]
 
-AACCOUNT_ACTIVATION_DAYS = 7 # one-week to activate account
+ACCOUNT_ACTIVATION_DAYS = 7 # one-week to activate account
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
@@ -139,3 +139,7 @@ EMAIL_USE_TLS = False
 EMAIL_PORT = 1025
 
 LOGIN_REDIRECT_URL = 'home'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'assets', 'media')
+MEDIA_URL = '/media/'
+

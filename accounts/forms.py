@@ -20,7 +20,7 @@ class UserProfileForm(forms.ModelForm):
                           label='About Me',
                           required=False,
                           widget=forms.Textarea(),
-                          min_length=10
+                          min_length=5
                           )
     name = forms.CharField(label='Full Name')
 

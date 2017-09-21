@@ -29,3 +29,5 @@ urlpatterns = [
     url(r'^profile/', include('accounts.urls', namespace='accounts'))
 ]
 
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

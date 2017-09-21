@@ -28,7 +28,7 @@ class UserProfileView(LoginRequiredMixin, generic.TemplateView):
         user = User.objects.get(username=lookup)
         profile = models.Profile.objects.get(user=user)
         context['profile'] = profile
-        #context['skills'] = profile.skills.all()
+        context['skills'] = profile.skills_set.all()
         return context
 
 
@@ -141,7 +141,9 @@ def edit_profile(request, pk):
     )
 
     if request.method == 'POST':
-        form = forms.UserProfileForm(request.POST, instance=profile)
+        form = forms.UserProfileForm(request.POST,
+                                     instance=profile,
+                                     files=request.FILES)
         skills_form = forms.SkillsInlineFormSet(
             request.POST,
             queryset=form.instance.skills_set.all(),
@@ -153,6 +155,8 @@ def edit_profile(request, pk):
             for skill in skills:
                 skill.profile = profile
                 skill.save()
+            for skill in skills_form.deleted_objects:
+                skill.delete()
             messages.success(request, 'Your profile has been updated!')
             return HttpResponseRedirect(reverse(
                 'accounts:profile',

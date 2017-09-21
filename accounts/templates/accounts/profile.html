@@ -77,8 +77,8 @@
       <div class="circle--secondary--module">
         <h4>My Skills</h4>
         <ul class="unloaded">
-        {% if user.skills_set %}
-            {% for skill in user.skills_set.all %}
+        {% if profile.skills_set %}
+            {% for skill in profile.skills_set.all %}
                 <li>{{ skill }}</li>
             {% endfor %}
         {% else %}
