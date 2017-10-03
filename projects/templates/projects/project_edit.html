@@ -1,0 +1,65 @@
+{% extends 'registration/registration_base.html' %}
+{% load bootstrap3 %}
+
+{% block title %}Edit Project |{{ block.super }}{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+  <div class="circle--actions--bar">
+    <div class="bounds">
+      <div class="grid-100">
+        <button class="button button-primary icon-on-left" type="submit" id="form-submit">Save Changes</button>
+        <a class="button button-text" href="{% url 'projects:delete' pk=projects.pk %}">Delete Project</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="bounds circle--page circle--article">
+    <div class="grid-70">
+      <div class="circle--article--body">
+        <h2>{% bootstrap_field form.title %}</h2>
+        <p>{% bootstrap_field form.description %}</p>
+      </div>
+        <div class="circle--project--positions">
+        <h2>Positions</h2>
+
+        <ul class="circle--group--list circle--clone--list">
+            {{ formset.management_form }}
+            {% for fset in formset %}
+            <li>
+                <div class="formset">{{ fset }}</div>
+
+            </li>
+            {% endfor %}
+        </ul>
+        </div>
+
+        <button class="button button-primary icon-on-left" type="submit" id="form-submit">Save Changes</button>
+    </div>
+
+    <div class="grid-25 grid-push-5">
+      <div class="circle--secondary--module">
+        <h3>Project Timeline</h3>
+        {% bootstrap_field form.time_estimate %}
+
+      <div class="circle--secondary--module">
+        <h3>Application Requirements</h3>
+        {% bootstrap_field form.requirements %}
+      </div>
+
+    </div>
+  </div>
+  </div>
+ </form>
+{% endblock %}
+{% block javascript %}
+    {% load static from staticfiles %}
+    <script src="{% static 'js/vendor/jquery.formset.js' %}"></script>
+    <script>
+        $('.position-form').formset({
+            addText: 'add position',
+            deleteText: 'remove'
+        });
+    </script>
+{% endblock %}

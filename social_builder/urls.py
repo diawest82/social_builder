@@ -23,10 +23,14 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^$', views.Home.as_view(), name='home' ),
+    url(r'^$', views.Home.as_view(), name='home'),
+    url(r'^custom', views.CustomSearch.as_view(), name='custom'),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('registration.backends.default.urls')),
-    url(r'^profile/', include('accounts.urls', namespace='accounts'))
+    url(r'^profile/', include('accounts.urls', namespace='accounts')),
+    url(r'^projects/', include('projects.urls', namespace='projects')),
+    url(r'^avatar/', include('avatar.urls')),
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()

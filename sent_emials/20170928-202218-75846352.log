@@ -1,0 +1,83 @@
+Content-Type: multipart/alternative; boundary="===============1060102032=="
+MIME-Version: 1.0
+Subject: Account activation on 127.0.0.1:8000
+From: testing@example.com
+To: test@email.com
+Date: Fri, 29 Sep 2017 01:22:18 -0000
+Message-ID: <20170929012218.19588.21855@DESKTOP-T7A9S0P.attlocal.net>
+
+--===============1060102032==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+
+
+You (or someone pretending to be you) have asked to register an account at
+127.0.0.1:8000.  If this wasn't you, please ignore this email
+and your address will be removed from our records.
+
+
+To activate this account, please click the following link within the next
+7 days:
+
+
+http://127.0.0.1:8000/accounts/activate/e3db83c9bc12bb2f6cba126b7585a77c07355237/
+
+
+Sincerely,
+127.0.0.1:8000 Management
+
+
+
+
+
+--===============1060102032==
+Content-Type: text/html; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>127.0.0.1:8000 registration</title>
+</head>
+
+<body>
+<p>
+    
+    You (or someone pretending to be you) have asked to register an account at
+    127.0.0.1:8000.  If this wasn't you, please ignore this email
+    and your address will be removed from our records.
+    
+</p>
+<p>
+    
+    To activate this account, please click the following link within the next
+    7 days:
+    
+</p>
+
+<p>
+    <a href="http://127.0.0.1:8000/accounts/activate/e3db83c9bc12bb2f6cba126b7585a77c07355237/">
+        127.0.0.1:8000/accounts/activate/e3db83c9bc12bb2f6cba126b7585a77c07355237/
+    </a>
+</p>
+<p>
+    
+    Sincerely,
+    127.0.0.1:8000 Management
+    
+</p>
+</body>
+
+</html>
+
+
+
+
+--===============1060102032==--
+
+-------------------------------------------------------------------------------

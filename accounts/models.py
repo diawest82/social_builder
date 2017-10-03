@@ -10,7 +10,7 @@ from django.utils import timezone
 # Create your models here.
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
     name = models.CharField(max_length=140, default='')
     bio = models.TextField(blank=True, default='')
     avatar = fields.ImageField(upload_to='avatars/', blank=True, null=True)

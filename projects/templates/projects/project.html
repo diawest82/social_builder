@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load accounts_extras %}
+
+{% block title %}Projects | {{ block.super }}{% endblock %}
+
+{% block content %}
+    {% if user.is_authenticated and user == project.owner %}
+  <div class="circle--actions--bar">
+    <div class="bounds">
+      <div class="grid-100">
+        <a class="button" href="{% url 'projects:project_edit' pk=project.pk %}">Edit Project</a>
+        <a class="button button-text" href="{% url 'projects:delete' pk=project.pk %}">Delete Project</a>
+      </div>
+    </div>
+  </div>
+    {% endif %}
+  <div class="bounds circle--page circle--article">
+    <div class="grid-70">
+      <div class="circle--article--header">
+
+        <h4 class="circle--article--section">Project</h4>
+        <h1 class="circle--article--title">{{ project.title|title }}</h1>
+        <p class="circle--article--byline">Project Owner: <a>{{ project.owner|title }}</a></p>
+      </div>
+
+      <div class="circle--article--body">
+        <p>{{ project.description|markdown_to_html|safe }}</p>
+      </div>
+
+      <div class="circle--project--positions">
+          <a class="button button-primary icon-on-left" href="{% url 'projects:create_position' project_pk=project.pk %}">Create Position</a><h2>Positions</h2>
+
+        <ul class="circle--group--list">
+            {% if project.open_positions %}
+                {% for position in project.open_positions %}
+
+                    <li><a href="{% url 'projects:edit_position' project.pk position.pk %}">edit</a>
+              <h3>{{ position }}</h3>
+              <p>{{ position.description|markdown_to_html|safe}}</p>
+              <ul class="circle--group--list">
+                  {% for skill in position.skills.all %}
+                      <li>
+                        <h3>Position Skills</h3>
+                        <p>{{ skill }}</p>
+                      </li>
+                  {% endfor %}
+              </ul>
+            <a class="button button-primary" href="{% url 'projects:position_apply'  pk=position.pk %}">Apply</a>
+          </li>
+            {% endfor %}
+                {% else %}
+            <p>There are currently no positions open for this project</p>
+          {% endif %}
+        </ul>
+      </div>
+
+
+    </div>
+
+    <div class="grid-25 grid-push-5">
+      <div class="circle--secondary--module">
+        <h3>Project Needs</h3>
+        <ul class="circle--link--list">
+            {% if project.open_positions %}
+            {% for position in project.open_positions %}
+          <li><a href="">{{ position.name }}</a></li>
+                {% endfor %}
+            {% else %}
+                No need!
+        </ul>
+          {% endif %}
+      </div>
+
+      <div class="circle--secondary--module">
+        <h3>Project Timeline</h3>
+        <p>{{ project.time_estimate }}</p>
+      </div>
+
+      <div class="circle--secondary--module">
+        <h3>Applicant Requirements</h3>
+        <p>{{ project.requirements }}</p>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

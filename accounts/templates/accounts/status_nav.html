@@ -1,0 +1,5 @@
+<ul class="circle--filter--list">
+    {% for stat in status %}
+        <li><a href="{% url 'accounts:status' status=stat %}">{{ stat }}</a> </li>
+    {% endfor %}
+</ul>

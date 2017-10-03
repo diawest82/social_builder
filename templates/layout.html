@@ -37,7 +37,7 @@
     <div class="bounds">
       <div class="circle--fluid">
         <div class="circle--fluid--cell">
-          <h1 class="hide-text circle--logo"><a class="logo" href="index.html">Circle</a></h1>
+          <h1 class="hide-text circle--logo"><a class="logo" href="{% url 'inde' %}">Circle</a></h1>
         </div>
         <div class="circle--fluid--cell circle--fluid--primary">
           <div class="circle--search">
@@ -68,5 +68,7 @@
   </header>
 
  {% block content %}{% endblock %}
+
+{% block javascript %}{% endblock %}
 </body>
 </html>

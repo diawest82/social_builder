@@ -1,0 +1,43 @@
+{% extends 'registration/registration_base.html' %}
+{% load bootstrap3 %}
+
+{% block title %} Create A Project | {{ block.super }}{% endblock %}
+
+{% block content %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+  <div class="circle--actions--bar">
+    <div class="bounds">
+      <div class="grid-100">
+        <button class="button button-primary icon-on-left" type="submit">Save Changes</button>
+        <a class="button button-text" href="index.html">Discard</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="bounds circle--page circle--article">
+    <div class="grid-70">
+      <div class="circle--article--body">
+        <h2>{% bootstrap_field form.title %}</h2>
+          <p>{% bootstrap_field form.description %}</p>
+      </div>
+
+
+    </div>
+
+    <div class="grid-25 grid-push-5">
+
+      <div class="circle--secondary--module">
+          <h3>{% bootstrap_field form.time_estimate %}</h3>
+      </div>
+
+      <div class="circle--secondary--module">
+        <h3>Applicant Requirements</h3>
+        {% bootstrap_field form.requirements %}
+      </div>
+
+    </div>
+
+  </div>
+    </form>
+{% endblock %}

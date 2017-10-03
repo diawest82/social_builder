@@ -1,0 +1,131 @@
+{% extends 'registration/registration_base.html' %}
+{% load accounts_extras %}
+
+{% block title %}Applications | {{ block.super }}{% endblock %}
+
+{% block content %}
+  <div class="circle--actions--bar">
+    <nav class="bounds">
+      <ul class="circle--pill--list">
+        <li><a class="selected" href="{% url 'accounts:applications' %}">Project Applications</a></li>
+        <li><a href="{% url 'accounts:profile' username=user.username %}">Profile</a></li>
+          <li><a href="{% url 'accounts:my_notifications' %}">My Notifications</a> </li>
+          <li><a  href="{% url 'projects:my_projects' %}">My Projects</a> </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="bounds circle--page">
+    <div class="circle--page--header grid-100">
+      <h2>Applications</h2>
+    </div>
+
+    <div class="grid-25">
+      <div class="circle--filter circle--secondary--module">
+        <h4>Status</h4>
+        <ul class="circle--filter--list">
+          <li><a {% if status == 'all' %}class="selected"{% endif %} href="{% url 'accounts:applications' %}">All Applications</a></li>
+        {% status_app_list %}
+        </ul>
+      </div>
+
+      <div class="circle--filter circle--secondary--module">
+        <h4>My Projects</h4>
+        <ul class="circle--filter--list">
+          <li><a class="selected">All Projects</a></li>
+            {% if projects %}
+                {% for project in projects %}
+                    <li><a class="clickable-row" data-href="{% url 'projects:detail' pk=project.pk %}">{{ project.title|title }}</a></li>
+                {% endfor %}
+            {% endif %}
+      </div>
+
+      <div class="circle--filter circle--secondary--module">
+        <h4>Project Needs</h4>
+        <ul class="circle--filter--list">
+          <li><a class="selected">All Needs</a></li>
+            {% for proj_pos in projects %}
+                {% if proj_pos.open_positions %}
+                    {% for pos in proj_pos.open_positions %}
+                        <li><a class="clickable-row">{{ pos }}</a></li>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="grid-70 grid-push-5">
+      <table class="u-full-width circle--table">
+        <thead>
+          <tr>
+            <th>Applicant</th>
+            <th class="circle--cell--right">Applicant Position</th>
+          </tr>
+        </thead>
+        <tbody>
+        {#% if applications %#}
+        {% for application in applications %}
+          <tr class="clickable-row" data-href="{% url 'accounts:profile' username=application.applicant.username %}">
+            <td>
+                <a > <h3>{{ application.applicant }}</h3></a>
+              <p>{{ application.project }}</p>
+            </td>
+            <td class="circle--cell--right">
+                {{ application.position }}
+            </td>
+            {% if application.is_accepted == None %}
+                    <td>
+                        <a href="{% url 'accounts:status_update' application.position.pk application.applicant.pk 'approve' %}">Approve</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'accounts:status_update' application.position.pk application.applicant.pk 'deny' %}">Deny</a>
+                    </td>
+
+                {% elif application.is_accepted %}
+                    <td colspan="2">Approved!</td>
+                {% elif not application.is_accepted %}
+                    <td colspan="2">Denied</td>
+                {% endif %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+      <div>
+          <h2>Projects</h2>
+          <p>
+         </p>
+      </div>
+
+    <div class="grid-70 grid-push-5">
+      <table class="u-full-width circle--table">
+        <thead>
+          <tr>
+            <th>Project Title</th>
+            <th class="circle--cell--right">Project Needs</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% if projects %}
+        {% for project in projects %}
+          <tr class="clickable-row" data-href="{% url 'projects:detail' pk=project.pk %}">
+            <td>
+                {{ project.title|title }}
+            </td>
+            <td class="circle--cell--right">
+                {% if project.open_positions %}
+                    {{ project.open_positions|join:", " }}
+                {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+{% endblock %}

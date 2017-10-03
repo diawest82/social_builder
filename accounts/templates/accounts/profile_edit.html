@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'registration/registration_base.html' %}
 {% load bootstrap3 %}
 
 {% block title %} Sign In | {{block.super }}{% endblock %}
@@ -79,13 +79,13 @@
             {{ form2.management_form}}
             {% for f in form2 %}
           <li>
-              {{ f }}
+              <div class="skills_form">{{ f }}</div>
             <!--<input type="text" placeholder="Skill" />-->
-
+            <!--<a class="circle--clone--add">Add Skill</a>-->
           </li>
+
+
             {% endfor %}
-            <a class="circle--clone--add">Add Skill</a>
-            <a class="circle--clone--remove">Remove</a>
         </ul>
       </div>
 
@@ -103,4 +103,15 @@
     </div>
   </form>
   </div>
+{% endblock %}
+
+{% block javascript %}
+    {% load static from staticfiles %}
+    <script src="{% static 'js/vendor/jquery.formset.js' %}"></script>
+    <script>
+        $('.skills_form').formset({
+            addText: 'add skill',
+            deleteText: 'remove'
+        });
+    </script>
 {% endblock %}

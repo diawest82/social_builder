@@ -1,0 +1,39 @@
+{% extends 'registration/registration_base.html' %}
+
+{% block title %}Delete Project | {{ block.super }}{% endblock %}
+
+{% block content %}
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+  <div class="circle--actions--bar">
+    <div class="bounds">
+      <div class="grid-100">
+        <button class="button button-primary icon-on-left" type="submit" id="form-submit">Delete</button>
+        <a class="button button-text" href="{% url 'projects:project_edit' pk=project.pk %}">Return</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="bounds circle--page circle--article">
+    <div class="grid-70">
+      <div class="circle--article--body">
+        <h2>Are you sure you want to delete?</h2>
+          <p>This cannot be undone.</p>
+      </div>
+        {{ form.as_p }}
+        <div class="grid-30">
+            <button class="button button-primary" type="submit">Yes</button>
+        </div>
+        <div class="grid-30"></div>
+        <div class="grid-30">
+            <a class="button button-secondary" href="{% url 'projects:project_edit' pk=project.pk%}">No</a>
+        </div>
+
+    </div>
+
+    </div>
+  </div>
+  </div>
+ </form>
+
+{% endblock %}

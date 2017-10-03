@@ -1,0 +1,47 @@
+{% extends 'registration/registration_base.html' %}
+{% load bootstrap3 %}
+
+{% block title %} Create A Project | {{ block.super }}{% endblock %}
+
+{% block content %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+  <div class="circle--actions--bar">
+    <div class="bounds">
+      <div class="grid-100">
+        <button class="button button-primary icon-on-left" type="submit">Save Changes</button>
+
+      </div>
+    </div>
+  </div>
+
+<div class="circle--project--positions">
+        <h2>Positions</h2>
+        {% bootstrap_form form %}
+
+        <ul class="circle--group--list circle--clone--list">
+            {{ formset.management_form }}
+            {% for fset in formset %}
+          <li>
+              <div class="formset">{{ fset }}
+
+              </div>
+          </li>
+            {% endfor %}
+
+        </ul>
+        <button class="button button-primary icon-on-left" type="submit">Save Changes</button>
+
+      </div>
+    </form>
+{% endblock %}
+{% block javascript %}
+    {% load static from staticfiles %}
+    <script src="{% static 'js/vendor/jquery.formset.js' %}"></script>
+    <script>
+        $('.formset').formset({
+            addText: 'new skill',
+            deleteText: 'remove skill'
+        });
+    </script>
+{% endblock %}

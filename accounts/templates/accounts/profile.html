@@ -1,5 +1,6 @@
-{% extends 'base.html' %}
+{% extends 'registration/registration_base.html' %}
 {% load bootstrap3 %}
+{% load accounts_extras %}
 
 {% block title %} Sign In | {{block.super }}{% endblock %}
 
@@ -7,8 +8,10 @@
  <div class="circle--actions--bar">
     <nav class="bounds">
       <ul class="circle--pill--list">
-        <li><a href="applications.html">Applications</a></li>
-        <li><a class="selected" href="profile.html">Profile</a></li>
+        <li><a href="{% url 'accounts:applications' %}">Project Applications</a></li>
+        <li><a class="selected" href="{% url 'accounts:profile' username=user.username %}">Profile</a></li>
+        <li><a href="{% url 'accounts:my_notifications' %}">My Notifications</a> </li>
+          <li><a href="{% url 'projects:my_projects' %}">My Projects</a> </li>
       </ul>
     </nav>
   </div>
@@ -19,7 +22,9 @@
         <h2>Profile</h2>
       </div>
       <div class="circle--fluid--cell circle--fluid--secondary">
+          {% if user.is_authenticated and username == user.username  %}
         <a class="button icon-on-left" href="{% url 'accounts:edit_profile' profile.pk %}">Edit</a>
+          {% endif %}
       </div>
     </div>
 
@@ -27,7 +32,7 @@
       <h1>{{ profile.name|title }}</h1>
       <div class="circle--article--body">
           {% if profile.bio %}
-            <p>{{ profile.bio }}</p>
+            <p>{{ profile.bio|markdown_to_html|safe }}</p>
           {% else %}
             <p>Add bio<a href="#">Edit</a> </p>
           {% endif %}
@@ -42,22 +47,18 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="clickable-row" data-href="project.html">
+        {% if applications %}
+        {% for app in applications %}
+          <tr class="clickable-row" data-href="{% url 'projects:detail' pk=app.project.pk %}">
             <td>
-              <h3>Invoice Delivery Tool</h3>
+                {{ app.project.title|title }}
             </td>
             <td class="circle--cell--right">
-              <span class="secondary-label">Rails Developer</span>
+                    {{ app.position}}
             </td>
           </tr>
-          <tr class="clickable-row" data-href="project.html">
-            <td>
-              <h3>Twitter Client</h3>
-            </td>
-            <td class="circle--cell--right">
-              <span class="secondary-label">Designer</span>
-            </td>
-          </tr>
+        {% endfor %}
+        {% endif %}
         </tbody>
       </table>
     </div>
@@ -67,7 +68,7 @@
       <div class="circle--secondary--module">
         <div class="circle--primary--avatar">
             {% if profile.avatar %}
-                <img src="{{ profile.avatar.url }}" class="img-responsive">
+                <img class="img-responsive img-circle" src="{{ profile.avatar.url }}" >
             {% else %}
                 <p>Add a profile picture<a href="{% url 'accounts:edit_profile' profile.pk%}">Edit</a> </p>
             {% endif %}
@@ -90,14 +91,14 @@
       <div class="circle--secondary--module">
         <h4>My Projects</h4>
         <ul class="circle--link--list">
-          <li><a>Project 1</a></li>
-          <li><a>Project 2</a></li>
-          <li><a>Project 3</a></li>
-          <li><a>Project 4</a></li>
+            {% if user.project %}
+            {% for proj in user.project.all %}
+          <li><a class="clickable-row" data-href="{% url 'projects:detail' pk=proj.pk %}">{{ proj }}</a></li>
+            {% endfor %}
+        {% endif %}
         </ul>
       </div>
     </div>
 
   </div>
-
 {% endblock %}

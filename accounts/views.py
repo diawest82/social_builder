@@ -1,20 +1,26 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import (authenticate,)
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
 from django.views import generic
-from django.db import transaction
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.db.models import Q
 
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, PrefetchRelatedMixin
+from notifications.signals import notify
+from projects.models import *
 from . import models
 from . import forms
 # Create your views here.
+
+
+STATUS_CHOICES ={
+    'new': None,
+    'accepted': True,
+    'rejected': False
+}
 
 
 class UserProfileView(LoginRequiredMixin, generic.TemplateView):
@@ -25,108 +31,13 @@ class UserProfileView(LoginRequiredMixin, generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super(UserProfileView, self).get_context_data(**kwargs)
         lookup = kwargs.get('username')
-        user = User.objects.get(username=lookup)
+        user = User.objects.filter(username=lookup)
         profile = models.Profile.objects.get(user=user)
+        app = Applications.objects.filter(applicant=user)
         context['profile'] = profile
         context['skills'] = profile.skills_set.all()
+        context['applications'] = app
         return context
-
-
-"""class UserProfileUpdateView(LoginRequiredMixin, generic.UpdateView):
-    model = models.Profile
-    template_name = 'accounts/profile_edit.html'
-    form_class = forms.UserProfileForm
-
-    def get(self, request, *args, **kwargs):
-        super(UserProfileUpdateView, self).get(request, *args, **kwargs)
-        profile = models.Profile.objects.prefetch_related('skills_set').get(
-            pk=self.object.pk)
-        form2 = self.form_class(instance=profile)
-        return render(request, 'accounts/profile_edit.html',
-                      {
-                          'profile': profile,
-                          'form2': form2
-                      }
-                      )
-
-    def get_success_url(self):
-        messages.success(self.request, "Your Profile has been updated")
-        return reverse(
-            'accounts:profile',
-            kwargs={'username': self.request.user.username}
-        )"""
-
-
-
-class UserProfileSkillsUpdateView(LoginRequiredMixin, SuccessMessageMixin, generic.UpdateView):
-    """Updates User Profile"""
-    model = models.Profile
-    template_name = 'accounts/profile_edit.html'
-    form_class = forms.SkillsInlineFormSet
-    form_class2 = forms.UserProfileForm
-
-    def get_context_data(self, **kwargs):
-        data = super(UserProfileSkillsUpdateView, self).get_context_data(**kwargs)
-        if self.request.POST:
-            data['skills'] = forms.SkillsInlineFormSet(
-                self.request.POST,
-                instance=self.object
-            )
-            data['profile'] = forms.UserProfileForm(
-                self.request.POST,
-                instance=self.object
-            )
-        else:
-            data['skills'] = forms.SkillsInlineFormSet(instance=self.object)
-            data['profile'] = forms.UserProfileForm(
-                instance=self.object
-            )
-        return data
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-        skills = context['skills']
-        profile = context['profile']
-        profile = form2.save(commit=False)
-        profile.save()
-        with transaction.atomic():
-            self.object = form.save()
-
-            if skills.is_valid():
-                skills.instance = self.object
-                skills.save()
-        return super(UserProfileSkillsUpdateView, self).form_valid(form)
-
-    def get_success_url(self):
-        messages.success(self.request, "Your Profile has been updated")
-        return reverse(
-            'accounts:profile',
-            kwargs={'username': self.request.user.username}
-        )
-
-
-class UserSkillsView(LoginRequiredMixin, generic.CreateView, generic.UpdateView):
-    model = get_user_model()
-    success_url = 'accounts/profile_edit.html'
-
-    def get_context_data(self, **kwargs):
-        data = super(UserSkillsView, self).get_context_data(**kwargs)
-        if self.request.POST:
-            data['skills'] = forms.UserSkillsFormSet(self.request.POST)
-        else:
-            data['skills'] = forms.UserSkillsFormSet()
-        return data
-
-    def form_valid(self, form):
-        context = self.get_context_data()
-        skills = context['skills']
-        with transaction.atomic():
-            self.object = form.save()
-
-            if skills.is_valid():
-                skills.instance = self.object
-                skills.save()
-        return super(UserSkillsView, self).form_valid(form)
 
 
 
@@ -169,3 +80,86 @@ def edit_profile(request, pk):
                       'form': form,
                       'form2': skills_form
                   })
+
+
+class ProjectApplications(LoginRequiredMixin,
+                       PrefetchRelatedMixin, generic.ListView):
+    model = Applications
+    template_name = 'accounts/applications.html'
+    prefetch_related = ['project', 'position']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        status_term = self.request.GET.get('status') or 'all'
+
+        if status_term and status_term != 'all':
+            if status_term in STATUS_CHOICES.keys():
+                queryset = queryset.filter(
+                    is_accepted=STATUS_CHOICES[status_term]
+                )
+                return queryset
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectApplications, self).get_context_data(**kwargs)
+        applications = Applications.objects.all()
+        projects = Projects.objects.prefetch_related('positions').filter(owner=self.request.user)
+        context['applications'] = applications.filter(~Q(
+            applicant=self.request.user))
+        context['projects'] = projects
+        return context
+
+
+class UserApplicationStatus(LoginRequiredMixin, generic.TemplateView):
+    def get(self, request, *args, **kwargs):
+        pos_pk = self.kwargs.get('position')
+        position = Positions.objects.get(pk=pos_pk)
+        if position.project.owner == self.request.user:
+            applicat_pk = self.kwargs.get('applicant')
+            applicant = get_object_or_404(User, pk=applicat_pk)
+            status = self.kwargs.get('status')
+            if status == 'approve' or status == 'deny':
+                if position and applicant:
+                    bstatus = True if status == 'approve' else False
+                    application = Applications.objects.filter(
+                        position=position, applicant=applicant
+                    ).update(is_accepted=bstatus)
+
+                    if status == 'approve':
+                        msg_status = 'approved'
+                    else:
+                        msg_status = 'denied'
+
+                    notify.send(
+                        applicant,
+                        recipient=applicant,
+                        verb='Your application for {} as {} was {}'.format(
+                            position.project.title, position.name, msg_status),
+                        description=''
+                    )
+                    return HttpResponseRedirect(reverse('accounts:applications'))
+        return HttpResponseRedirect(reverse('accounts:applications'))
+
+
+class UserNotifications(LoginRequiredMixin, PrefetchRelatedMixin, generic.TemplateView):
+    template_name = 'accounts/notifications.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['unreads'] = self.request.user.notifications.unread()
+        return context
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+
+def search_applicants(request, status):
+    if status in STATUS_CHOICES.keys():
+        apps = Applications.objects.filter(is_accepted=STATUS_CHOICES[status])
+    projects = Projects.objects.prefetch_related('positions').filter(owner=request.user)
+    return render(request, 'accounts/applications.html', {
+        'applications': apps,
+        'projects': projects
+    })
+
+

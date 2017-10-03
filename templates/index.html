@@ -1,83 +1,25 @@
+{% extends 'registration/registration_base.html' %}
 {% load static from staticfiles %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% block title %}Home | {{ block.super }}{% endblock %}
 
-  <!-- Basic Page Needs
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta charset="utf-8">
-  <title>{% block title %}Project Completer{% endblock %}</title>
-  <meta name="description" content="">
-  <meta name="author" content="">
-
-  <!-- Mobile Specific Metas
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- FONTS
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,500' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Cousine' rel='stylesheet' type='text/css'>
-
-  <!-- CSS
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="stylesheet" href="{% static 'css/global.css' %}">
-
-  <!-- JS
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-  <script type="text/javascript" src="{% static 'js/autogrow.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/global.js' %}"></script>
-
-
-</head>
-<body>
-  <header class="circle--header">
-    <div class="bounds">
-      <div class="circle--fluid">
-        <div class="circle--fluid--cell">
-          <h1 class="hide-text circle--logo"><a class="logo" href="index.html">Circle</a></h1>
-        </div>
-        <div class="circle--fluid--cell circle--fluid--primary">
-          <div class="circle--search">
-            <input type="text" placeholder="Search Projects..." />
-            <button>
-              <svg version="1.1" class="search" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 12 12" xml:space="preserve">
-                <path d="M12,10.6L8.3,6.9C8.7,6.2,9,5.4,9,4.5C9,2,7,0,4.5,0S0,2,0,4.5S2,9,4.5,9c0.9,0,1.7-0.3,2.4-0.7l3.7,3.7L12,10.6z M2,4.5
-                C2,3.1,3.1,2,4.5,2S7,3.1,7,4.5C7,5.9,5.9,7,4.5,7S2,5.9,2,4.5z"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div class="circle--fluid--cell circle--fluid--secondary">
-          <nav>
-            <ul class="circle--inline">
-                {% if not user.is_authenticated %}
-              <li><a href="{% url 'registration_register' %}">Sign Up</a></li>
-              <li><a href="{% url 'auth_login' %}">Sign In</a></li>
-                {% else %}
-                <li><a href="{% url 'accounts:profile' username=user.username %}">Profile</a> </li>
-                <li><a href="{% url 'accounts:edit_profile' pk=user.pk %}">Edit Profile</a> </li>
-                {% endif %}
-            </ul>
-          </nav>
-        </div>
-      </div>
-    </div>
-  </header>
-
+{% block content %}
   <div class="bounds circle--page">
     <div class="circle--page--header circle--fluid">
       <div class="circle--fluid--cell circle--fluid--primary">
         <h2>Projects</h2>
       </div>
       <div class="circle--fluid--cell circle--fluid--secondary">
-        <a class="button button-primary icon-on-left" href="project_new.html">
+          {% if user.is_authenticated  %}
+          <div>
+        <a class="button-secondary icon-on-left" href="{% url 'custom' %}">Recommendations</a>
+          </div>
+        <a class="button button-primary icon-on-left" href="{% url 'projects:create_project' %}">
           <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 13 13" style="enable-background:new 0 0 13 13;" xml:space="preserve" class="add">
             <polygon points="7,6 7,0 6,0 6,6 0,6 0,7 6,7 6,13 7,13 7,7 13,7 13,6 "/>
           </svg>
           New Project
         </a>
+          {% endif %}
       </div>
     </div>
 
@@ -85,15 +27,15 @@
       <div class="circle--filter circle--secondary--module">
         <h4>Project Needs</h4>
         <ul class="circle--filter--list">
-          <li><a class="selected">All Needs</a></li>
-          <li><a>Android Developer</a></li>
-          <li><a>Designer</a></li>
-          <li><a>Java Developer</a></li>
-          <li><a>PHP Developer</a></li>
-          <li><a>Python Developer</a></li>
-          <li><a>Rails Developer</a></li>
-          <li><a>WordPress Developer</a></li>
-          <li><a>iOS Developer</a></li>
+            {% if project_home %}
+                {% for project in project_home %}
+          {% if project.open_positions %}
+                {% for pos in project.open_positions %}
+              <li class="clickable-row" data-href="{% url 'projects:detail' pk=project.pk  %}">{{ pos }}</li>
+                    {% endfor %}
+                {% endif %}
+                {% endfor %}
+            {% endif %}
         </ul>
       </div>
     </div>
@@ -107,25 +49,22 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="clickable-row" data-href="project.html">
+        {% if project_home %}
+        {% for project in project_home %}
+          <tr class="clickable-row" data-href="{% url 'projects:detail' pk=project.pk %}">
             <td>
-              <h3>Invoice Delivery Tool</h3>
+                {{ project.title|title }}
             </td>
             <td class="circle--cell--right">
-              <span class="secondary-label">Rails Developer</span>
+                {% if project.open_positions %}
+                    {{ project.open_positions|join:", " }}
+                {% endif %}
             </td>
           </tr>
-          <tr class="clickable-row" data-href="project.html">
-            <td>
-              <h3>Twitter Client</h3>
-            </td>
-            <td class="circle--cell--right">
-              <span class="secondary-label">Designer</span>
-            </td>
-          </tr>
+        {% endfor %}
+        {% endif %}
         </tbody>
       </table>
     </div>
   </div>
-</body>
-</html>
+{% endblock %}

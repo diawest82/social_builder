@@ -16,7 +16,7 @@ class SkillForm(forms.ModelForm):
 
 class UserProfileForm(forms.ModelForm):
     avatar = fields.ImageField(upload_to='avatars/', blank=True)
-    bio = forms.CharField(max_length=150,
+    bio = forms.CharField(max_length=500,
                           label='About Me',
                           required=False,
                           widget=forms.Textarea(),
@@ -37,11 +37,11 @@ SkillsFormSet = forms.modelformset_factory(
     form=SkillForm,
 )
 
-SkillsInlineFormSet = forms.inlineformset_factory(
+SkillsInlineFormSet = inlineformset_factory(
     models.Profile,
     models.Skills,
     extra=1,
     fields=('skills',),
     formset=SkillsFormSet,
-    min_num=1,
+    can_delete=True
 )
