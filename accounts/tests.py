@@ -11,7 +11,6 @@ USER_CREATE_DATA = {
     'username': 'tester',
     'email': 'test@gmail.com',
     'password': 'testpassword',
-    #'password_confirmation': 'testpassword'
 }
 
 USER_Profile_Data = {
@@ -71,6 +70,7 @@ class TestViews(TestData):
                                )
         self.assertEqual(resp.status_code, 200)
 
+
 #### Form Test ####
 class FormTest(TestData):
     def test_profile_form(self):
@@ -79,5 +79,3 @@ class FormTest(TestData):
             'bio': 'This is me'
         })
         self.assertTrue(form.is_valid())
-
-

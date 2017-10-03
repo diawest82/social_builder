@@ -32,10 +32,8 @@ class Positions(models.Model):
     description = models.TextField(default='')
     filled = models.BooleanField(default=False)
 
-
-
     def __str__(self):
-        return '{}'.format( self.name.title())
+        return '{}'.format(self.name.title())
 
     def get_absolute_url(self):
         return self.project.get_absoulute_url()

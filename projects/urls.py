@@ -11,6 +11,4 @@ urlpatterns = [
     url(r'^create_position/(?P<project_pk>\d+)/$', views.create_position, name='create_position'),
     url(r'^edit_position/(?P<project_pk>\d+)/(?P<position_pk>\d+)/$', views.edit_position, name='edit_position'),
     url(r'^delete/(?P<pk>\d+)/$', views.ProjectDeleteView.as_view(), name='delete'),
-
-
 ]

@@ -12,12 +12,13 @@ from braces.views import LoginRequiredMixin
 from . import models
 from . import forms
 
+
 # Create your views here.
 class ProjectEditVIew(LoginRequiredMixin, generic.UpdateView):
+    """Edits the pr"""
     model = models.Projects
     form_class = forms.ProjectForm
     template_name = 'projects/project_edit.html'
-    #context_object_name = 'project'
     success_url = reverse_lazy('home')
 
     def get_context_data(self, **kwargs):
@@ -44,6 +45,7 @@ def edit_project(request, pk):
             queryset=form.instance.positions.all(),
         )
         if form.is_valid() and formset.is_valid():
+            form.save(commit=False)
             form.save()
             positions = formset.save(commit=False)
             for position in positions:

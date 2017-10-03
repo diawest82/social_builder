@@ -29,14 +29,14 @@
       </div>
 
       <div class="circle--project--positions">
-            {% if user.is_authenticated and username == user.username  %}
+            {% if user.is_authenticated and user == project.owner %}
           <a class="button button-primary icon-on-left" href="{% url 'projects:create_position' project_pk=project.pk %}">Create Position</a><h2>Positions</h2>
             {% endif %}
 
         <ul class="circle--group--list">
             {% if project.open_positions %}
                 {% for position in project.open_positions %}
-                    {% if user.is_authenticated and username == user.username  %}
+                    {% if user.is_authenticated and user == project.owner %}
                     <li><a href="{% url 'projects:edit_position' project.pk position.pk %}">edit</a>
                     {% endif %}
               <h3>{{ position }}</h3>

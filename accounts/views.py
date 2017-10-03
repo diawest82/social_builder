@@ -40,7 +40,6 @@ class UserProfileView(LoginRequiredMixin, generic.TemplateView):
         return context
 
 
-
 @login_required
 def edit_profile(request, pk):
     """ Edit User profile"""
@@ -58,7 +57,6 @@ def edit_profile(request, pk):
         skills_form = forms.SkillsInlineFormSet(
             request.POST,
             queryset=form.instance.skills_set.all(),
-            #files=request.FILES
         )
         if form.is_valid() and skills_form.is_valid():
             form.save()
@@ -83,7 +81,7 @@ def edit_profile(request, pk):
 
 
 class ProjectApplications(LoginRequiredMixin,
-                       PrefetchRelatedMixin, generic.ListView):
+                          PrefetchRelatedMixin, generic.ListView):
     model = Applications
     template_name = 'accounts/applications.html'
     prefetch_related = ['project', 'position']
@@ -103,7 +101,8 @@ class ProjectApplications(LoginRequiredMixin,
     def get_context_data(self, **kwargs):
         context = super(ProjectApplications, self).get_context_data(**kwargs)
         applications = Applications.objects.all()
-        projects = Projects.objects.prefetch_related('positions').filter(owner=self.request.user)
+        projects = Projects.objects.prefetch_related(
+            'positions').filter(owner=self.request.user)
         context['applications'] = applications.filter(~Q(
             applicant=self.request.user))
         context['projects'] = projects
@@ -141,7 +140,8 @@ class UserApplicationStatus(LoginRequiredMixin, generic.TemplateView):
         return HttpResponseRedirect(reverse('accounts:applications'))
 
 
-class UserNotifications(LoginRequiredMixin, PrefetchRelatedMixin, generic.TemplateView):
+class UserNotifications(LoginRequiredMixin,
+                        PrefetchRelatedMixin, generic.TemplateView):
     template_name = 'accounts/notifications.html'
 
     def get_context_data(self, **kwargs):
@@ -156,10 +156,9 @@ class UserNotifications(LoginRequiredMixin, PrefetchRelatedMixin, generic.Templa
 def search_applicants(request, status):
     if status in STATUS_CHOICES.keys():
         apps = Applications.objects.filter(is_accepted=STATUS_CHOICES[status])
-    projects = Projects.objects.prefetch_related('positions').filter(owner=request.user)
+    projects = Projects.objects.prefetch_related(
+        'positions').filter(owner=request.user)
     return render(request, 'accounts/applications.html', {
         'applications': apps,
         'projects': projects
     })
-
-
