@@ -79,3 +79,7 @@ to join. Finally, make sure you have login and logout links, too.
 * As a user of the site, I should be able to approve or deny applicants directly from the list of applicants.
 
 * As a user of the site, I should be given a list of projects that need my skill set.
+
+Sign Up instructions:
+
+Once you register for an account, an email with web address for verification will be sent out.  You can find the email in the "sent emails" folder.  Inside the email there will be text you can copy and past to your browser to verify your account.  
