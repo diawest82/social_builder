@@ -4,6 +4,11 @@
 {% block title %}Edit Project |{{ block.super }}{% endblock %}
 
 {% block content %}
+    {% if messages %}
+        {% for msg in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ msg }}</div>
+    {% endfor %}
+    {% endif %}
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
   <div class="circle--actions--bar">
@@ -19,11 +24,12 @@
   <div class="bounds circle--page circle--article">
     <div class="grid-70">
       <div class="circle--article--body">
-        {% bootstrap_form form %}
-      </div>
+
+
 
       <div class="circle--project--positions">
         <h2>Positions</h2>
+      {% bootstrap_form form %}
 
         <ul class="circle--group--list circle--clone--list">
             {{ formset.management_form }}
@@ -39,6 +45,7 @@
 
       </div>
     </div>
+     </div>
 
     <div class="grid-25 grid-push-5">
 

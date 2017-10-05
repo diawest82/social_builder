@@ -5,6 +5,7 @@
 {% block title %}Projects | {{ block.super }}{% endblock %}
 
 {% block content %}
+
     {% if user.is_authenticated and user == project.owner %}
   <div class="circle--actions--bar">
     <div class="bounds">
@@ -17,6 +18,11 @@
     {% endif %}
   <div class="bounds circle--page circle--article">
     <div class="grid-70">
+    {% if messages %}
+        {% for msg in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ msg }}</div>
+    {% endfor %}
+    {% endif %}
       <div class="circle--article--header">
 
         <h4 class="circle--article--section">Project</h4>
@@ -49,7 +55,9 @@
                       </li>
                   {% endfor %}
               </ul>
+                    {% if user.is_authenticated and user != project.owner %}
             <a class="button button-primary" href="{% url 'projects:position_apply'  pk=position.pk %}">Apply</a>
+                    {% endif %}
           </li>
             {% endfor %}
                 {% else %}

@@ -201,7 +201,7 @@ class ApplyPositionView(LoginRequiredMixin, generic.TemplateView):
         if application.exists():
             messages.success(request, "You've already applied for this position!")
             return HttpResponseRedirect(reverse(
-                'projects:project_detail', kwargs={'pk': pk}
+                'projects:detail', kwargs={'pk': project.pk}
             ))
 
         models.Applications.objects.create(
