@@ -24,7 +24,8 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.Home.as_view(), name='home'),
-    url(r'^custom', views.CustomSearch.as_view(), name='custom'),
+    url(r'^(?P<title>[a-zA-Z0-9_" "]+)$', views.JobFilter.as_view(), name='jobs'),
+    url(r'^/skills/(?P<skill>[a-zA-Z0-9_" "]+)$', views.SkillFilter.as_view(), name='skills'),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^profile/', include('accounts.urls', namespace='accounts')),

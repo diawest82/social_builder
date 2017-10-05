@@ -25,15 +25,7 @@
         <h4>Project Needs</h4>
         <ul class="circle--filter--list">
             <p><a href="{% url 'home' %}">All Open Positions</a> </p>
-            {% if project_home %}
-                {% for project in project_home %}
-          {% if project.open_positions %}
-                {% for pos in project.open_positions %}
-              <li class="clickable-row" data-href="{% url 'jobs' title=pos %}">{{ pos }}</li>
-                    {% endfor %}
-                {% endif %}
-                {% endfor %}
-            {% endif %}
+            <li class="clickable-row" data-href="{% url 'jobs' title=position %}">{{ position }}</li>
         </ul>
       </div>
     </div>
@@ -55,7 +47,7 @@
             </td>
             <td class="circle--cell--right">
                 {% if project.open_positions %}
-                    {{ project.open_positions|join:", " }}
+                    {{ position}}
                 {% endif %}
             </td>
           </tr>

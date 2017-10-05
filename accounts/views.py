@@ -155,7 +155,7 @@ class UserNotifications(LoginRequiredMixin,
 
 def search_applicants(request, status):
     if status in STATUS_CHOICES.keys():
-        apps = Applications.objects.filter(is_accepted=STATUS_CHOICES[status])
+        apps = Applications.objects.filter(is_accepted=STATUS_CHOICES[status]).filter(project__owner=request.user)
     projects = Projects.objects.prefetch_related(
         'positions').filter(owner=request.user)
     return render(request, 'accounts/applications.html', {

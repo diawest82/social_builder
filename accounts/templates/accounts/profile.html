@@ -9,7 +9,7 @@
     <nav class="bounds">
       <ul class="circle--pill--list">
         <li><a href="{% url 'accounts:applications' %}">Project Applications</a></li>
-        <li><a class="selected" href="{% url 'accounts:profile' username=user.username %}">Profile</a></li>
+        <li><a href="{% url 'accounts:profile' username=user.username %}">{{ user.username|title }}'s Profile</a></li>
         <li><a href="{% url 'accounts:my_notifications' %}">My Notifications</a> </li>
           <li><a href="{% url 'projects:my_projects' %}">My Projects</a> </li>
       </ul>
