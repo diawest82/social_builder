@@ -2,10 +2,13 @@ from django.views.generic import ListView
 from django.shortcuts import render
 from django.db.models import Q
 
+from braces.views import LoginRequiredMixin
+
 from projects.models import *
 from accounts.models import *
 
-class Home(ListView):
+
+class Home(LoginRequiredMixin, ListView):
     model = Projects
     template_name = 'index.html'
     context_object_name = 'project_home'
@@ -24,11 +27,12 @@ class Home(ListView):
         context = super().get_context_data(**kwargs)
         position = self.kwargs.get('title')
         context['position'] = position
+        #if not self.request.user:
         context['skills'] = Profile.objects.get(user=self.request.user)
         return context
 
 
-class JobFilter(ListView):
+class JobFilter(LoginRequiredMixin, ListView):
     model = Projects
     template_name = 'index_search.html'
     context_object_name = 'project_home'
@@ -50,7 +54,7 @@ class JobFilter(ListView):
         return context
 
 
-class SkillFilter(ListView):
+class SkillFilter(LoginRequiredMixin, ListView):
     model = Projects
     template_name = 'index_skills.html'
     context_object_name = 'project_home'
@@ -72,8 +76,5 @@ class SkillFilter(ListView):
         return context
 
 
-def job_filter(request, title):
-    projects = Projects.objects.filter(__icontains=title.title)
-    return render(request, 'index.html', {
-        'project_home': projects
-    })
+def welcome(request):
+    return render(request, 'welcome.html')

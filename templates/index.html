@@ -67,11 +67,13 @@
     <div class="grid-25 grid-push-5">
     <div class="circle--secondary--module">
       <ul class="circle--filter--list">
+      {% if user.is_authenticated %}
       <h4>{{ user|title }}'s Skills</h4>
 
           {% for skill in skills.skills_set.all %}
           <li class="clickable-row" data-href="{% url 'skills' skill=skill %}">{{ skill }}</li>
           {% endfor %}
+      {% endif %}
       </ul>
 
       </div>
